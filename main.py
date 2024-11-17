@@ -12,8 +12,8 @@ import jeu
 
 ##########
 
-NBR_PLAYER = 4
-NBR_BOT = 2
+NBR_PLAYER = 2
+NBR_BOT = 0
 
 ##########
 

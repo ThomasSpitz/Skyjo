@@ -180,7 +180,7 @@ class Jeu():
         self.mid_game(max_player)
 
     def mid_game(self,tour):
-        affichages.cancel_indicateur((tour -1)%4,self.background,self.screen,self.p)
+        affichages.cancel_indicateur((tour -1)%self.nbr_players,self.background,self.screen,self.p)
         affichages.indicateur(tour,self.background,self.screen,self.p)
         while 1 :
             for event in pygame.event.get():
@@ -189,7 +189,7 @@ class Jeu():
                 if event.type == pygame.MOUSEBUTTONDOWN :
                     (x,y) = pygame.mouse.get_pos()
                     (n,i,j)= get_lc(self.p,x,y)
-                    if n == -2 :
+                    if n == -2 :        ##cas ou le joueur appuie sur la pioche
                         current_card = self.pioche.pick(False)
                         current_card.afficher(self.p,self.background,self.screen)
                         while 1 :
@@ -199,15 +199,15 @@ class Jeu():
                                 if event.type == pygame.MOUSEBUTTONDOWN :
                                     (x,y) = pygame.mouse.get_pos()
                                     (n,i,j)= get_lc(self.p,x,y)
-                                    if n == tour :
+                                    if n == tour :  ##cas ou le joueur appuie sur une de ses cartes
                                         self.centre.player = -3
                                         self.defausse.append(self.centre)
                                         affichages.afficher_carte(500-3.5*self.p,500-7.5*self.p,self.background,self.screen,self.p)
                                         self.centre = self.players[tour].cards[i][j]
                                         self.centre.reveal(self.p,self.background,self.screen,True)
                                         self.players[tour].cards[i][j] = current_card.attribuer(tour,i,j,self.p,self.background,self.screen)
-                                        return self.mid_game((tour + 1)%4)
-                                    elif n==-1 :
+                                        return self.mid_game((tour + 1)%self.nbr_players)
+                                    elif n==-1 :        ##cas ou le joueur appuie sur la carte du centre
                                         self.centre.player = -3
                                         self.defausse.append(self.centre)
                                         affichages.afficher_carte(500-3.5*self.p,500-7.5*self.p,self.background,self.screen,self.p)
@@ -222,6 +222,21 @@ class Jeu():
                                                     (n,i,j)= get_lc(self.p,x,y)
                                                     if n==tour and self.players[tour].cards[i][j].revealed == False:
                                                         self.players[tour].cards[i][j].reveal(self.p,self.background,self.screen)
-                                                        return self.mid_game((tour+1)%4)
-                    
+                                                        return self.mid_game((tour+1)%self.nbr_players)
+                    elif n == -1 : ##cas ou le joueur appuie sur la carte du centre
+                        current_card = self.centre
+                        while 1:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    return
+                                if event.type == pygame.MOUSEBUTTONDOWN :
+                                    (x,y) = pygame.mouse.get_pos()
+                                    (n,i,j)= get_lc(self.p,x,y)
+                                    if n == tour :##cas ou le joueur appuie sur une de ses cartes
+                                        self.centre = self.players[tour].cards[i][j]
+                                        self.players[tour].cards[i][j] = current_card.attribuer(tour,i,j,self.p,self.background,self.screen)
+                                        self.centre.reveal(self.p,self.background,self.screen,True)
+                                        
+                                        return self.mid_game((tour + 1)%self.nbr_players)
+
                         
